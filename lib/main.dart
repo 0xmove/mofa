@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mofa/theme/theme.dart';
 
 void main() {
   runApp(const MofaApp());
@@ -12,7 +14,10 @@ class MofaApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mofa',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: AppTheme.primary,
+        appBarTheme: AppBarTheme(
+          color: AppTheme.primary
+        )
       ),
       home: const MofaHomePage(title: 'Mofa'),
     );
@@ -35,17 +40,51 @@ class _MofaHomePageState extends State<MofaHomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Hello Mofa',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppTheme.primary,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
         ),
+      ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            height: 234,
+            margin: const EdgeInsets.fromLTRB(16, 26, 16, 26),
+            // color: AppTheme.primary,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(18))
+            ),
+            child: Container(
+              color: AppTheme.primary,
+              padding: EdgeInsets.all(26),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Aptos(APT)", style: TextStyle(fontSize: 24, color: Colors.white)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        height: 30,
+                        width: 30,
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: ColoredBox(color: Colors.white),
+                      ),
+                      Text("0.0", style: TextStyle(fontSize: 40, color: Colors.white))
+                    ],
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
