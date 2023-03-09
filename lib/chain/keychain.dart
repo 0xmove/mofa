@@ -33,6 +33,8 @@ class Keychain {
 
   final String _privateKey = "private_key";
 
+  final String _publicKey = "public_key";
+
   final String _passwordKey = "password_key";
 
   Future<bool> setMnemonic(String value) => write(_mnemonicKey, value);
@@ -42,6 +44,10 @@ class Keychain {
   Future<bool> setPrivateKey(String value) => write(_privateKey, value);
 
   Future<String> getPrivateKey() => read(_privateKey);
+
+  Future<bool> setPublicKey(String value) => write(_publicKey, value);
+
+  Future<String> getPublicKey() => read(_publicKey);
 
   Future<bool> setPasswordKey(String value) => write(_passwordKey, value);
 

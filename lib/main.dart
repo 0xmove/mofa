@@ -1,91 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mofa/chain/account.dart';
+import 'package:mofa/chain/keychain.dart';
+import 'package:mofa/pages/home.dart';
+import 'package:mofa/pages/receive.dart';
 import 'package:mofa/theme/theme.dart';
 
 void main() {
   runApp(const MofaApp());
 }
 
+final _router = GoRouter(
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (context, state) {
+        return const MofaMainPage(title: "Mofa");
+      },
+      routes: [
+        GoRoute(
+          path: "home",
+          builder: (context, state) {
+            return const MofaHomePage(title: "Mofa");
+          },
+          routes: [
+            GoRoute(
+              path: "receive",
+              builder: (context, index) {
+                return const Receive(chainType: ChainType.sui);
+              }
+            )
+          ]
+        ),
+      ]
+    ),
+  ]
+);
+
 class MofaApp extends StatelessWidget {
   const MofaApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mofa',
+    return MaterialApp.router(
       theme: ThemeData(
-        primaryColor: AppTheme.primary,
+        primaryColor: AppTheme.white,
         appBarTheme: AppBarTheme(
-          color: AppTheme.primary
+          color: AppTheme.white,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppTheme.white
+          ),
+          iconTheme: IconThemeData(color: Colors.black)
         )
       ),
-      home: const MofaHomePage(title: 'Mofa'),
+      routerConfig: _router,
     );
   }
 }
 
-class MofaHomePage extends StatefulWidget {
-  const MofaHomePage({super.key, required this.title});
+class MofaMainPage extends StatefulWidget {
+  const MofaMainPage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MofaHomePage> createState() => _MofaHomePageState();
+  State<MofaMainPage> createState() => _MofaMainPageState();
 }
 
-class _MofaHomePageState extends State<MofaHomePage> {
+class _MofaMainPageState extends State<MofaMainPage> {
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        elevation: 0,
+        backgroundColor: AppTheme.primary,
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: AppTheme.primary,
-          statusBarBrightness: Brightness.light,
-          statusBarIconBrightness: Brightness.dark,
+        statusBarColor: AppTheme.primary
         ),
       ),
+      backgroundColor: AppTheme.primary,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
           Container(
-            height: 234,
-            margin: const EdgeInsets.fromLTRB(16, 26, 16, 26),
-            // color: AppTheme.primary,
-            clipBehavior: Clip.hardEdge,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(18))
-            ),
-            child: Container(
-              color: AppTheme.primary,
-              padding: EdgeInsets.all(26),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Aptos(APT)", style: TextStyle(fontSize: 24, color: Colors.white)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        height: 30,
-                        width: 30,
-                        clipBehavior: Clip.hardEdge,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15)
-                        ),
-                        child: ColoredBox(color: Colors.white),
-                      ),
-                      Text("0.0", style: TextStyle(fontSize: 40, color: Colors.white))
-                    ],
-                  )
-                ],
+            margin: EdgeInsets.only(top: 100),
+            child: Center(
+              child: SizedBox(
+                height: 200,
+                width: 200,
+                child: Image.asset("assets/images/mofa_logo.png"),
               ),
             ),
           ),
+          Container(
+            margin: EdgeInsets.only(left: 20, right: 20, bottom: 40),
+            child: Column(
+              children: [
+                ElevatedButton(onPressed: (){
+                  final mnemonics = Account.generateMnemonics();
+                  final aptosAccount = Account(ChainType.aptos, mnemonics: mnemonics);
+                  final suiAccount = Account(ChainType.sui, mnemonics: mnemonics);
+                  Keychain.shared.setMnemonic(mnemonics);
+                  context.go("/home");
+                },
+                 child: Text("Create Wallet"),
+                 style: ElevatedButton.styleFrom(
+                  minimumSize: Size.fromHeight(50),
+                  backgroundColor: AppTheme.white,
+                  foregroundColor: AppTheme.primary,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(25)))
+                 ),
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(onPressed: (){},
+                 child: Text("Import Wallet"),
+                 style: ElevatedButton.styleFrom(
+                  minimumSize: Size.fromHeight(50),
+                  backgroundColor: AppTheme.primary,
+                  foregroundColor: AppTheme.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25)),
+                    side: BorderSide(color: AppTheme.white)
+                  )
+                 ),
+                ),
+              ],
+            ),
+          )
         ],
-      ),
+      )
     );
   }
+ 
 }
